@@ -20,13 +20,67 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(noReverse = true){
+    this.noReverse = noReverse;
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  encrypt(message, key) {
+    if (!message || !key){
+      throw new Error('Incorrect arguments!')
+    }
+
+    let res = [];
+    let counter = 0;
+    message = message.toUpperCase();
+    key = key.toUpperCase();
+
+    while (message.length > key.length){
+      key += key;
+    }
+
+    for (let i = 0; i < message.length; i++){
+
+      if (message[i].charCodeAt() > 64 && message[i].charCodeAt() < 91) {
+        res.push(String.fromCharCode((message[i].charCodeAt() + key[counter].charCodeAt() + 26) % 26 + 65) );
+        counter++;
+      } else {
+        res.push(message[i])
+      }
+
+    }
+
+    if (!this.noReverse){
+      return res.reverse().join('');
+    }
+
+    return res.join('');
+  }
+
+  decrypt(encryptedMessage, key) {
+    if (!encryptedMessage || !key){
+      throw new Error('Incorrect arguments!')
+    }
+
+    let res = [];
+    let counter = 0;
+    encryptedMessage = encryptedMessage.toUpperCase();
+    key = key.toUpperCase();
+
+    while (encryptedMessage.length > key.length){
+      key += key;
+    }
+    for (let i = 0; i < encryptedMessage.length; i++){
+      if (encryptedMessage[i].charCodeAt() > 64 && encryptedMessage[i].charCodeAt() < 91) {
+        res.push(String.fromCharCode((encryptedMessage[i].charCodeAt() - key[counter].charCodeAt() + 26) % 26 + 65) );
+        counter++;
+      } else {
+        res.push(encryptedMessage[i])
+      }
+    }
+    if (!this.noReverse){
+      return res.reverse().join('');
+    }
+    return res.join('');
   }
 }
 
